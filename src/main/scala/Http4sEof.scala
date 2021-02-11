@@ -22,15 +22,15 @@ object Http4sEof extends IOApp {
 
   // unstable
   val requestPayloadSize = 32603
-  val responsePayloadSize = 881161
+  val responsePayloadSize = 81161
 
   // stable
   // val requestPayloadSize = 32602
-  // val responsePayloadSize = 881161
+  // val responsePayloadSize = 81161
 
   // stable
   // val requestPayloadSize = 32603
-  // val responsePayloadSize = 881160
+  // val responsePayloadSize = 81160
 
   val uri = uri"http://localhost:8099"
   val body = "x".repeat(requestPayloadSize)
