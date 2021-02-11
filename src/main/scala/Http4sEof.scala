@@ -14,7 +14,8 @@ import scala.concurrent.duration._
 object Http4sEof extends IOApp {
 
   val appTime = 30.seconds
-  // If request payload size is 32603 or greater
+  // Numbers below vary on different computers
+  // In my case, if request payload size is 32603 or greater
   //  AND response payload size is 81161 or greater
   //  then we get EOF exception in some but not all cases
   // If however either of these payload sizes is lower then
