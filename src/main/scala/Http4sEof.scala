@@ -48,7 +48,7 @@ object Http4sEof extends IOApp {
           .flatMap(c => c.stream(req))
           .flatMap(_.bodyText)
       })
-      .evalMap(_ => IO.delay(println(i)))
+      .evalMap(c => IO.delay(println(s"$i ${c.size}")))
       .interruptAfter(appTime)
 
     server(requestStream)
