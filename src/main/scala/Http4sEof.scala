@@ -2,36 +2,40 @@ package io.bitrise.apm.symbolicator
 
 import cats.effect.{ExitCode, IO, IOApp}
 import fs2.Stream
-import org.http4s.{HttpRoutes, _}
-import org.http4s.client.blaze.BlazeClientBuilder
+import org.http4s.client.Client
+import org.http4s.client.jdkhttpclient.JdkHttpClient
 import org.http4s.dsl.io._
 import org.http4s.implicits._
 import org.http4s.server.blaze.BlazeServerBuilder
+import org.http4s.{HttpRoutes, _}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 object Http4sEof extends IOApp {
 
-  val appTime = 30.seconds
-  // Numbers below vary on different computers
-  // In my case, if the request payload size is 32603 or greater
-  //  AND response payload size is 81161 or greater
-  //  then we get EOF exception in some but not all cases
-  // If however either of these payload sizes is lower then
-  //  EOF exception doesn't occur, even if running for an extended period
+  val appTime = 300.seconds
+  // Numbers below may vary on different computers
+  // In my case, if the request payload size is 523329 or greater
+  //  OR response payload size is 65417 or greater
+  //  then we get java.io.IOException: fixed content-length: 65416, bytes received: 49032
+  //  in some but not all cases.
+  // If however both of these payload sizes are lower then
+  //  fixed content-length exception doesn't occur, even if running for an extended period.
+  //  Yet in some rare cases java.io.IOException: HTTP/1.1 header parser received no bytes
+  //  will show up.
 
-  // unstable
-  val requestPayloadSize = 32603
-  val responsePayloadSize = 81161
+  // stable - at least for content-length
+  val requestPayloadSize = 523328 // it's 8 times 65416 !?
+  val responsePayloadSize = 65416 // it's 8 times 8177 !?
 
-  // stable
-  // val requestPayloadSize = 32602
-  // val responsePayloadSize = 81161
+  // broken - yet fairly stable
+  // val requestPayloadSize = 523329
+  // val responsePayloadSize = 65416
 
-  // stable
-  // val requestPayloadSize = 32603
-  // val responsePayloadSize = 81160
+  // quite broken
+  // val requestPayloadSize = 523328
+  // val responsePayloadSize = 65417
 
   val uri = uri"http://localhost:8099"
   val body = "x".repeat(requestPayloadSize)
@@ -40,26 +44,31 @@ object Http4sEof extends IOApp {
 
   var i = 0
   override def run(args: List[String]): IO[ExitCode] = {
-    val requestStream: Stream[IO, Unit] = Stream
-      .fixedRate(0.01.second)
-      .flatMap(_ => {
-        i = i + 1
+    simpleClient.flatMap(client => {
+      val requestStream: Stream[IO, Unit] = Stream
+        .fixedRate(0.01.second)
+        .flatMap(_ => {
+          i = i + 1
+          val y: Stream[IO, Response[IO]] = client.stream(req)
+          y.flatMap(r => r.bodyText)
+        })
+        .evalMap(c => IO.delay(println(s"$i ${c.size}")))
+        .interruptAfter(appTime)
 
-        simpleClient.stream
-          .flatMap(c => c.stream(req))
-          .flatMap(_.bodyText)
-      })
-      .evalMap(c => IO.delay(println(s"$i ${c.size}")))
-      .interruptAfter(appTime)
-
-    server(requestStream)
+      server(requestStream)
+    })
   }
 
-  val simpleClient: BlazeClientBuilder[IO] =
-    BlazeClientBuilder[IO](ExecutionContext.global)
-      .withRequestTimeout(45.seconds)
-      .withIdleTimeout(1.minute)
-      .withResponseHeaderTimeout(44.seconds)
+  import java.net.http.HttpClient
+  val client0: IO[Client[IO]] = IO {
+    HttpClient
+      .newBuilder()
+      .version(HttpClient.Version.HTTP_2)
+      .build()
+
+  }.map(JdkHttpClient(_))
+
+  val simpleClient: IO[Client[IO]] = JdkHttpClient.simple[IO]
 
   def server(app: Stream[IO, Unit]) =
     BlazeServerBuilder[IO](ExecutionContext.global)
