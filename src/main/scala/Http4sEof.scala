@@ -18,12 +18,11 @@ object Http4sEof extends IOApp {
   // Numbers below may vary on different computers
   // In my case, if the request payload size is 523329 or greater
   //  OR response payload size is 65417 or greater
-  //  then we get java.io.IOException: fixed content-length: 65416, bytes received: 49032
+  //  then I get a java.io.IOException: fixed content-length: 65416, bytes received: 49032
   //  in some but not all cases.
   // If however both of these payload sizes are lower then
   //  fixed content-length exception doesn't occur, even if running for an extended period.
-  //  Yet in some rare cases java.io.IOException: HTTP/1.1 header parser received no bytes
-  //  will show up.
+  //  Yet in some rare cases I get a java.io.IOException: HTTP/1.1 header parser received no bytes
 
   // stable - at least for content-length
   val requestPayloadSize = 523328 // it's 8 times 65416 !?
