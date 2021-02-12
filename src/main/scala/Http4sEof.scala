@@ -3,6 +3,7 @@ package io.bitrise.apm.symbolicator
 import cats.effect.{ExitCode, IO, IOApp}
 import fs2.Stream
 import org.http4s.{HttpRoutes, _}
+import org.http4s.client.Client
 import org.http4s.client.blaze.BlazeClientBuilder
 import org.http4s.dsl.io._
 import org.http4s.implicits._
@@ -34,25 +35,23 @@ object Http4sEof extends IOApp {
   // val responsePayloadSize = 81160
 
   val uri = uri"http://localhost:8099"
-  val body = "x".repeat(requestPayloadSize)
+  val body = "x" * requestPayloadSize
   val req = Request[IO](POST, uri).withEntity(body)
-  val response = "x".repeat(responsePayloadSize)
+  val response = "x" * responsePayloadSize
 
   var i = 0
   override def run(args: List[String]): IO[ExitCode] = {
-    val requestStream: Stream[IO, Unit] = Stream
+    def requestStream(client: Client[IO]): Stream[IO, Unit] = Stream
       .fixedRate(0.01.second)
       .flatMap(_ => {
         i = i + 1
 
-        simpleClient.stream
-          .flatMap(c => c.stream(req))
-          .flatMap(_.bodyText)
+        client.stream(req).flatMap(_.bodyText)
       })
       .evalMap(c => IO.delay(println(s"$i ${c.size}")))
       .interruptAfter(appTime)
 
-    server(requestStream)
+    server(simpleClient.stream.flatMap(requestStream))
   }
 
   val simpleClient: BlazeClientBuilder[IO] =
