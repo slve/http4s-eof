@@ -3,10 +3,11 @@ scalaVersion := "2.13.3"
 scalacOptions ++= Seq("-Wconf:any:warning-verbose")
 
 libraryDependencies ++= Seq(
-  "co.fs2"        %% "fs2-core"    % "2.5.0",
-  "org.scalatest" %% "scalatest"   % "3.0.8",
-  "org.typelevel" %% "cats-core"   % "2.4.1",
-  "org.typelevel" %% "cats-effect" % "2.3.1"
+  "co.fs2"                        %% "fs2-core"    % "2.5.0",
+  "org.scalatest"                 %% "scalatest"   % "3.0.8",
+  "com.softwaremill.sttp.client3" %% "core"        % "3.1.1",
+  "org.typelevel"                 %% "cats-core"   % "2.4.1",
+  "org.typelevel"                 %% "cats-effect" % "2.3.1"
 ) ++ Seq(
   "org.http4s" %% "http4s-blaze-client",
   "org.http4s" %% "http4s-dsl",

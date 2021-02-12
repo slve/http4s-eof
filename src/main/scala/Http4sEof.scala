@@ -2,11 +2,6 @@ package io.bitrise.apm.symbolicator
 
 import cats.effect.{ExitCode, IO, IOApp}
 import fs2.Stream
-import org.http4s.{HttpRoutes, _}
-import org.http4s.client.blaze.BlazeClientBuilder
-import org.http4s.dsl.io._
-import org.http4s.implicits._
-import org.http4s.server.blaze.BlazeServerBuilder
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -21,33 +16,40 @@ object Http4sEof extends IOApp {
   // If however either of these payload sizes is lower then
   //  EOF exception doesn't occur, even if running for an extended period
 
-  // unstable
-  val requestPayloadSize = 32603
+  // broken at first request
+  val requestPayloadSize = 81161
   val responsePayloadSize = 81161
 
-  // stable
-  // val requestPayloadSize = 32602
-  // val responsePayloadSize = 81161
-
-  // stable
-  // val requestPayloadSize = 32603
+  // fairly stable
+  // val requestPayloadSize = 81160
   // val responsePayloadSize = 81160
 
-  val uri = uri"http://localhost:8099"
+  // stable
+  // val requestPayloadSize = 81100
+  // val responsePayloadSize = 81100
+
   val body = "x".repeat(requestPayloadSize)
-  val req = Request[IO](POST, uri).withEntity(body)
   val response = "x".repeat(responsePayloadSize)
 
   var i = 0
   override def run(args: List[String]): IO[ExitCode] = {
+    import sttp.client3._
+
+    val uri = uri"http://localhost:8099"
+
+    import sttp.client3._
+
+    val backend = HttpURLConnectionBackend()
+
     val requestStream: Stream[IO, Unit] = Stream
       .fixedRate(0.01.second)
-      .flatMap(_ => {
+      .map(_ => {
         i = i + 1
 
-        simpleClient.stream
-          .flatMap(c => c.stream(req))
-          .flatMap(_.bodyText)
+        basicRequest
+          .body(body)
+          .post(uri)
+          .send(backend).body.toOption.get // let's just throw if fails to get
       })
       .evalMap(c => IO.delay(println(s"$i ${c.size}")))
       .interruptAfter(appTime)
@@ -55,13 +57,12 @@ object Http4sEof extends IOApp {
     server(requestStream)
   }
 
-  val simpleClient: BlazeClientBuilder[IO] =
-    BlazeClientBuilder[IO](ExecutionContext.global)
-      .withRequestTimeout(45.seconds)
-      .withIdleTimeout(1.minute)
-      .withResponseHeaderTimeout(44.seconds)
+  def server(app: Stream[IO, Unit]) = {
+    import org.http4s.HttpRoutes
+    import org.http4s.dsl.io._
+    import org.http4s.implicits._
+    import org.http4s.server.blaze.BlazeServerBuilder
 
-  def server(app: Stream[IO, Unit]) =
     BlazeServerBuilder[IO](ExecutionContext.global)
       .withIdleTimeout(5.minutes)
       .bindHttp(8099, "0.0.0.0")
@@ -78,5 +79,6 @@ object Http4sEof extends IOApp {
       .compile
       .drain
       .as(ExitCode.Success)
+  }
 
 }
