@@ -6,30 +6,32 @@ import fs2.Stream
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-object Http4sEof extends IOApp {
+object Main extends IOApp {
 
-  val appTime = 30.seconds
   // Numbers below vary on different computers
-  // In my case, if the request payload size is 32603 or greater
+  // In my case, if the request payload size is 65289 or greater
   //  AND response payload size is 81161 or greater
-  //  then I get an EOF exception in some but not all cases
+  //  then I get a sttp.client3.SttpClientException$ReadException on the first request
   // If however either of these payload sizes is lower then
-  //  EOF exception doesn't occur, even if running for an extended period
+  //  ReadException doesn't occur, even if running for an extended period
 
   // broken at first request
-  val requestPayloadSize = 81161
+  val appTime = 5.seconds
+  val requestPayloadSize = 65289
   val responsePayloadSize = 81161
 
-  // fairly stable
-  // val requestPayloadSize = 81160
-  // val responsePayloadSize = 81160
+  // can hold for 5 seconds, but broken on longer run, like 30 seconds appTime
+  //val appTime = 30.seconds
+  //val requestPayloadSize = 65288
+  //val responsePayloadSize = 81161
 
-  // stable
-  // val requestPayloadSize = 81100
-  // val responsePayloadSize = 81100
+  // more stable, can hold up to 30 seconds appTime, seen broken on 120 seconds
+  //val appTime = 120.seconds
+  //val requestPayloadSize = 65289
+  //val responsePayloadSize = 81160
 
-  val body = "x".repeat(requestPayloadSize)
-  val response = "x".repeat(responsePayloadSize)
+  val body = "x" * requestPayloadSize
+  val response = "x" * responsePayloadSize
 
   var i = 0
   override def run(args: List[String]): IO[ExitCode] = {
