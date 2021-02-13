@@ -12,10 +12,10 @@ import org.http4s.server.blaze.BlazeServerBuilder
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-object Http4sEof extends IOApp {
+object BlazeClientTest extends IOApp {
 
   // Numbers below vary on different computers
-  // In my case, if the request payload size is 32603 or greater
+  // In my case, if the request payload size is 65398 or greater
   //  AND response payload size is 81161 or greater
   //  then I get an EOF exception in some but not all cases
   // If however either of these payload sizes is lower then

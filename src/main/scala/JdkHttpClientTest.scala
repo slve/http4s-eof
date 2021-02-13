@@ -37,9 +37,9 @@ object JdkHttpClientTest extends IOApp {
   // val responsePayloadSize = 65417
 
   val uri = uri"http://localhost:8099"
-  val body = "x".repeat(requestPayloadSize)
+  val body = "x" * requestPayloadSize
   val req = Request[IO](POST, uri).withEntity(body)
-  val response = "x".repeat(responsePayloadSize)
+  val response = "x" * responsePayloadSize
 
   var i = 0
   override def run(args: List[String]): IO[ExitCode] = {

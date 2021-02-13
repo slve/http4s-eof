@@ -16,9 +16,9 @@ object EmberClientTest extends IOApp {
 
   // Numbers below vary on different computers
   // In my case, if the request payload size is 65337 or greater
-  //  then I get an EOF exception on the first request
+  //  then I get an java.io.IOException on the first request
   // If however the request payload size is 65336 or lower
-  //  EOF exception doesn't occur, even if the response size is 200MB
+  //  java.io.IOException doesn't occur, even if the response size is 200MB
   //  while running the test for an extended period
 
   // broken on first request
