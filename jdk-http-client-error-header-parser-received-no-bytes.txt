@@ -1,0 +1,49 @@
+val requestPayloadSize = 86603
+val responsePayloadSize = 65416
+
+/usr/lib/jvm/java-15-openjdk/bin/java -javaagent:/usr/share/jetbrains-idea-ce/lib/idea_rt.jar=37799:/usr/share/jetbrains-idea-ce/bin -Dfile.encoding=UTF-8 -classpath /home/user/repos/http4s-eof/target/scala-2.13/classes:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/co/fs2/fs2-core_2.13/2.5.0/fs2-core_2.13-2.5.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/co/fs2/fs2-io_2.13/2.5.0/fs2-io_2.13-2.5.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/co/fs2/fs2-reactive-streams_2.13/2.5.0/fs2-reactive-streams_2.13-2.5.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/com/twitter/hpack/1.0.2/hpack-1.0.2.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/io/chrisdavenport/unique_2.13/2.0.0/unique_2.13-2.0.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/io/chrisdavenport/vault_2.13/2.0.0/vault_2.13-2.0.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/eclipse/jetty/alpn/alpn-api/1.1.3.v20160715/alpn-api-1.1.3.v20160715.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/blaze-core_2.13/0.14.15/blaze-core_2.13-0.14.15.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/blaze-http_2.13/0.14.15/blaze-http_2.13-0.14.15.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-blaze-client_2.13/0.21.18/http4s-blaze-client_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-blaze-core_2.13/0.21.18/http4s-blaze-core_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-blaze-server_2.13/0.21.18/http4s-blaze-server_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-client_2.13/0.21.18/http4s-client_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-core_2.13/0.21.18/http4s-core_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-dsl_2.13/0.21.18/http4s-dsl_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-jdk-http-client_2.13/0.3.5/http4s-jdk-http-client_2.13-0.3.5.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-server_2.13/0.21.18/http4s-server_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/parboiled_2.13/2.0.1/parboiled_2.13-2.0.1.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/log4s/log4s_2.13/1.9.0/log4s_2.13-1.9.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/reactivestreams/reactive-streams/1.0.3/reactive-streams-1.0.3.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.13/1.2.0/scala-xml_2.13-1.2.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.3/scala-library-2.13.3.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.3/scala-reflect-2.13.3.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scalactic/scalactic_2.13/3.0.8/scalactic_2.13-3.0.8.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest_2.13/3.0.8/scalatest_2.13-3.0.8.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scodec/scodec-bits_2.13/1.1.23/scodec-bits_2.13-1.1.23.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-core_2.13/2.4.1/cats-core_2.13-2.4.1.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-effect_2.13/2.3.1/cats-effect_2.13-2.3.1.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-kernel_2.13/2.4.1/cats-kernel_2.13-2.4.1.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/typelevel/simulacrum-scalafix-annotations_2.13/0.5.3/simulacrum-scalafix-annotations_2.13-0.5.3.jar io.bitrise.apm.symbolicator.Http4sEof
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+[...]
+1538 16264
+1538 16384
+1538 16384
+1538 16385
+java.io.IOException: HTTP/1.1 header parser received no bytes
+	at java.net.http/jdk.internal.net.http.common.Utils.wrapWithExtraDetail(Utils.java:334)
+	at java.net.http/jdk.internal.net.http.Http1Response$HeadersReader.onReadError(Http1Response.java:674)
+	at java.net.http/jdk.internal.net.http.Http1AsyncReceiver.checkForErrors(Http1AsyncReceiver.java:302)
+	at java.net.http/jdk.internal.net.http.Http1AsyncReceiver.flush(Http1AsyncReceiver.java:268)
+	at java.net.http/jdk.internal.net.http.common.SequentialScheduler$SynchronizedRestartableTask.run(SequentialScheduler.java:175)
+	at java.net.http/jdk.internal.net.http.common.SequentialScheduler$CompleteRestartableTask.run(SequentialScheduler.java:147)
+	at java.net.http/jdk.internal.net.http.common.SequentialScheduler$SchedulableTask.run(SequentialScheduler.java:198)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630)
+	at java.base/java.lang.Thread.run(Thread.java:832)
+	at async @ org.http4s.client.jdkhttpclient.package$.$anonfun$fromCompletableFutureShift$1(package.scala:42)
+	at guarantee$extension @ org.http4s.client.jdkhttpclient.package$.$anonfun$fromCompletableFutureShift$1(package.scala:51)
+	at bracketCase @ org.http4s.client.jdkhttpclient.package$.fromCompletableFutureShift(package.scala:52)
+	at tupled @ org.http4s.client.jdkhttpclient.JdkHttpClient$.convertResponse$1(JdkHttpClient.scala:163)
+	at tupled @ org.http4s.client.jdkhttpclient.JdkHttpClient$.convertResponse$1(JdkHttpClient.scala:163)
+	at make @ org.http4s.server.blaze.BlazeServerBuilder.$anonfun$resource$1(BlazeServerBuilder.scala:411)
+	at apply @ org.http4s.blazecore.package$.tickWheelResource(package.scala:24)
+	at flatMap @ fs2.internal.CompileScope.acquireResource(CompileScope.scala:180)
+	at flatMap @ fs2.internal.FreeC$.$anonfun$compile$12(Algebra.scala:511)
+	at flatMap @ fs2.internal.FreeC$.interruptGuard$1(Algebra.scala:436)
+	at flatMap @ fs2.internal.FreeC$.$anonfun$compile$7(Algebra.scala:463)
+	at flatMap @ fs2.internal.FreeC$.go$1(Algebra.scala:460)
+	at flatMap @ fs2.internal.FreeC$.interruptGuard$1(Algebra.scala:436)
+Caused by: java.io.EOFException: EOF reached while reading
+	at java.net.http/jdk.internal.net.http.Http1AsyncReceiver$Http1TubeSubscriber.onComplete(Http1AsyncReceiver.java:596)
+	at java.net.http/jdk.internal.net.http.SocketTube$InternalReadPublisher$ReadSubscription.signalCompletion(SocketTube.java:632)
+	at java.net.http/jdk.internal.net.http.SocketTube$InternalReadPublisher$InternalReadSubscription.read(SocketTube.java:833)
+	at java.net.http/jdk.internal.net.http.SocketTube$SocketFlowTask.run(SocketTube.java:175)
+	at java.net.http/jdk.internal.net.http.common.SequentialScheduler$SchedulableTask.run(SequentialScheduler.java:198)
+	at java.net.http/jdk.internal.net.http.common.SequentialScheduler.runOrSchedule(SequentialScheduler.java:271)
+	at java.net.http/jdk.internal.net.http.common.SequentialScheduler.runOrSchedule(SequentialScheduler.java:224)
+	at java.net.http/jdk.internal.net.http.SocketTube$InternalReadPublisher$InternalReadSubscription.handleSubscribeEvent(SocketTube.java:690)
+	at java.net.http/jdk.internal.net.http.AsyncTriggerEvent.handle(AsyncTriggerEvent.java:54)
+	at java.net.http/jdk.internal.net.http.HttpClientImpl$SelectorManager.run(HttpClientImpl.java:814)
+
+Process finished with exit code 1

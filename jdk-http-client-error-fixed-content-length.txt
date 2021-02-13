@@ -1,0 +1,72 @@
+val requestPayloadSize = 986603
+val responsePayloadSize = 65416
+
+Note: when the error occurs it always says it received 49032
+
+/usr/lib/jvm/java-15-openjdk/bin/java -javaagent:/usr/share/jetbrains-idea-ce/lib/idea_rt.jar=37799:/usr/share/jetbrains-idea-ce/bin -Dfile.encoding=UTF-8 -classpath /home/user/repos/http4s-eof/target/scala-2.13/classes:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/co/fs2/fs2-core_2.13/2.5.0/fs2-core_2.13-2.5.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/co/fs2/fs2-io_2.13/2.5.0/fs2-io_2.13-2.5.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/co/fs2/fs2-reactive-streams_2.13/2.5.0/fs2-reactive-streams_2.13-2.5.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/com/twitter/hpack/1.0.2/hpack-1.0.2.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/io/chrisdavenport/unique_2.13/2.0.0/unique_2.13-2.0.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/io/chrisdavenport/vault_2.13/2.0.0/vault_2.13-2.0.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/eclipse/jetty/alpn/alpn-api/1.1.3.v20160715/alpn-api-1.1.3.v20160715.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/blaze-core_2.13/0.14.15/blaze-core_2.13-0.14.15.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/blaze-http_2.13/0.14.15/blaze-http_2.13-0.14.15.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-blaze-client_2.13/0.21.18/http4s-blaze-client_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-blaze-core_2.13/0.21.18/http4s-blaze-core_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-blaze-server_2.13/0.21.18/http4s-blaze-server_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-client_2.13/0.21.18/http4s-client_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-core_2.13/0.21.18/http4s-core_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-dsl_2.13/0.21.18/http4s-dsl_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-jdk-http-client_2.13/0.3.5/http4s-jdk-http-client_2.13-0.3.5.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/http4s-server_2.13/0.21.18/http4s-server_2.13-0.21.18.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/parboiled_2.13/2.0.1/parboiled_2.13-2.0.1.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/log4s/log4s_2.13/1.9.0/log4s_2.13-1.9.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/reactivestreams/reactive-streams/1.0.3/reactive-streams-1.0.3.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.13/1.2.0/scala-xml_2.13-1.2.0.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.3/scala-library-2.13.3.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.3/scala-reflect-2.13.3.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scalactic/scalactic_2.13/3.0.8/scalactic_2.13-3.0.8.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest_2.13/3.0.8/scalatest_2.13-3.0.8.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/scodec/scodec-bits_2.13/1.1.23/scodec-bits_2.13-1.1.23.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-core_2.13/2.4.1/cats-core_2.13-2.4.1.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-effect_2.13/2.3.1/cats-effect_2.13-2.3.1.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-kernel_2.13/2.4.1/cats-kernel_2.13-2.4.1.jar:/home/user/.dots/cache/coursier/v1/https/repo1.maven.org/maven2/org/typelevel/simulacrum-scalafix-annotations_2.13/0.5.3/simulacrum-scalafix-annotations_2.13-0.5.3.jar io.bitrise.apm.symbolicator.Http4sEof
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+1 16264
+1 16384
+1 16384
+1 16384
+2 16264
+2 16384
+2 16384
+2 16384
+3 16264
+3 16384
+3 16384
+3 16384
+4 16264
+4 16384
+4 16384
+java.io.IOException: fixed content-length: 65416, bytes received: 49032
+	at java.net.http/jdk.internal.net.http.common.Utils.wrapWithExtraDetail(Utils.java:337)
+	at java.net.http/jdk.internal.net.http.Http1Response$BodyReader.onReadError(Http1Response.java:759)
+	at java.net.http/jdk.internal.net.http.Http1AsyncReceiver.checkForErrors(Http1AsyncReceiver.java:302)
+	at java.net.http/jdk.internal.net.http.Http1AsyncReceiver.flush(Http1AsyncReceiver.java:268)
+	at java.net.http/jdk.internal.net.http.common.SequentialScheduler$SynchronizedRestartableTask.run(SequentialScheduler.java:175)
+	at java.net.http/jdk.internal.net.http.common.SequentialScheduler$CompleteRestartableTask.run(SequentialScheduler.java:147)
+	at java.net.http/jdk.internal.net.http.common.SequentialScheduler$SchedulableTask.run(SequentialScheduler.java:198)
+	at java.net.http/jdk.internal.net.http.common.SequentialScheduler.runOrSchedule(SequentialScheduler.java:271)
+	at java.net.http/jdk.internal.net.http.common.SequentialScheduler.runOrSchedule(SequentialScheduler.java:224)
+	at java.net.http/jdk.internal.net.http.Http1AsyncReceiver$Http1AsyncDelegateSubscription.request(Http1AsyncReceiver.java:153)
+	at java.net.http/jdk.internal.net.http.ResponseSubscribers$PublishingBodySubscriber$SubscriptionRef.request(ResponseSubscribers.java:891)
+	at org.reactivestreams.FlowAdapters$ReactiveToFlowSubscription.request(FlowAdapters.java:189)
+	at fs2.interop.reactivestreams.StreamSubscriber$.$anonfun$fsm$13(StreamSubscriber.scala:158)
+	at flatMap @ fs2.internal.FreeC$.interruptGuard$1(Algebra.scala:436)
+	at flatMap @ fs2.internal.FreeC$.interruptGuard$1(Algebra.scala:436)
+	at flatMap @ fs2.internal.FreeC$.interruptGuard$1(Algebra.scala:436)
+	at flatMap @ fs2.internal.FreeC$.interruptGuard$1(Algebra.scala:436)
+	at map @ fs2.internal.CompileScope.interruptibleEval(CompileScope.scala:418)
+	at flatMap @ fs2.internal.FreeC$.go$1(Algebra.scala:503)
+	at flatMap @ fs2.internal.FreeC$.$anonfun$compile$7(Algebra.scala:463)
+	at flatMap @ fs2.internal.FreeC$.go$1(Algebra.scala:460)
+	at flatMap @ fs2.internal.FreeC$.$anonfun$compile$7(Algebra.scala:463)
+	at flatMap @ fs2.internal.FreeC$.go$1(Algebra.scala:460)
+	at flatMap @ fs2.internal.FreeC$.$anonfun$compile$7(Algebra.scala:463)
+	at flatMap @ fs2.internal.FreeC$.go$1(Algebra.scala:460)
+	at flatMap @ fs2.internal.FreeC$.$anonfun$compile$7(Algebra.scala:463)
+	at flatMap @ fs2.internal.FreeC$.go$1(Algebra.scala:460)
+	at flatMap @ fs2.internal.FreeC$.interruptGuard$1(Algebra.scala:436)
+	at flatMap @ fs2.internal.FreeC$.interruptGuard$1(Algebra.scala:436)
+Caused by: java.io.IOException: Broken pipe
+	at java.base/sun.nio.ch.FileDispatcherImpl.writev0(Native Method)
+	at java.base/sun.nio.ch.SocketDispatcher.writev(SocketDispatcher.java:66)
+	at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:182)
+	at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:130)
+	at java.base/sun.nio.ch.SocketChannelImpl.write(SocketChannelImpl.java:536)
+	at java.base/java.nio.channels.SocketChannel.write(SocketChannel.java:537)
+	at java.net.http/jdk.internal.net.http.SocketTube.writeAvailable(SocketTube.java:1219)
+	at java.net.http/jdk.internal.net.http.SocketTube$InternalWriteSubscriber.tryFlushCurrent(SocketTube.java:342)
+	at java.net.http/jdk.internal.net.http.SocketTube$InternalWriteSubscriber.signalWritable(SocketTube.java:415)
+	at java.net.http/jdk.internal.net.http.SocketTube$InternalWriteSubscriber$WriteEvent.signalEvent(SocketTube.java:442)
+	at java.net.http/jdk.internal.net.http.SocketTube$SocketFlowEvent.handle(SocketTube.java:245)
+	at java.net.http/jdk.internal.net.http.HttpClientImpl$SelectorManager.handleEvent(HttpClientImpl.java:956)
+	at java.net.http/jdk.internal.net.http.HttpClientImpl$SelectorManager.lambda$run$3(HttpClientImpl.java:911)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.net.http/jdk.internal.net.http.HttpClientImpl$SelectorManager.run(HttpClientImpl.java:911)
+
+Process finished with exit code 1
