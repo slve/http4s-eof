@@ -6,7 +6,7 @@ import fs2.Stream
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-object Main extends IOApp {
+object SttpClientTest extends IOApp {
 
   // Numbers below vary on different computers
   // In my case, if the request payload size is 65289 or greater
