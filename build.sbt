@@ -16,4 +16,4 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-blaze-server",
   "org.http4s" %% "http4s-dsl",
   "org.http4s" %% "http4s-ember-client"
-).map(_ % "0.21.18")
+).map(_ % "0.21.19")
