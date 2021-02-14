@@ -15,6 +15,7 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-blaze-client",
   "org.http4s" %% "http4s-blaze-server",
   "org.http4s" %% "http4s-dsl",
+  "org.http4s" %% "http4s-async-http-client",
   "org.http4s" %% "http4s-ember-client",
   "org.http4s" %% "http4s-jetty-client",
   "org.http4s" %% "http4s-okhttp-client"
