@@ -1,20 +1,14 @@
-package io.bitrise.apm.symbolicator
-
 import cats.effect.{ExitCode, IO, IOApp}
 import fs2.Stream
+import helpers.requestStream
+import org.http4s._
 import org.http4s.client.Client
 import org.http4s.client.jdkhttpclient.JdkHttpClient
 import org.http4s.dsl.io._
 import org.http4s.implicits._
-import org.http4s.server.blaze.BlazeServerBuilder
-import org.http4s.{HttpRoutes, _}
 
-import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-object JdkHttpClientTest extends IOApp {
-
-  val appTime = 300.seconds
   // Numbers below may vary on different computers
   // In my case, if the request payload size is 523329 or greater
   //  OR response payload size is 65417 or greater
@@ -35,56 +29,21 @@ object JdkHttpClientTest extends IOApp {
   // quite broken
   // val requestPayloadSize = 523328
   // val responsePayloadSize = 65417
+class JdkHttpClientTest(appTime: FiniteDuration, requestPayloadSize: Int, responsePayloadSize: Int) extends IOApp {
 
   val uri = uri"http://localhost:8099"
   val body = "x" * requestPayloadSize
   val req = Request[IO](POST, uri).withEntity(body)
   val response = "x" * responsePayloadSize
 
-  var i = 0
   override def run(args: List[String]): IO[ExitCode] = {
-    simpleClient.flatMap(client => {
-      val requestStream: Stream[IO, Unit] = Stream
-        .fixedRate(0.01.second)
-        .flatMap(_ => {
-          i = i + 1
-          val y: Stream[IO, Response[IO]] = client.stream(req)
-          y.flatMap(r => r.bodyText)
-        })
-        .evalMap(c => IO.delay(println(s"$i ${c.size}")))
-        .interruptAfter(appTime)
+    def request(client: Client[IO]): Stream[IO, String] = client.stream(req).flatMap(_.bodyText)
 
-      server(requestStream)
-    })
+    val simpleClient: IO[Client[IO]] = JdkHttpClient.simple[IO]
+
+    simpleClient.flatMap { client =>
+      new Server(requestStream(request(client), appTime), appTime, response).run(List())
+    }
   }
-
-  import java.net.http.HttpClient
-  val client0: IO[Client[IO]] = IO {
-    HttpClient
-      .newBuilder()
-      .version(HttpClient.Version.HTTP_2)
-      .build()
-
-  }.map(JdkHttpClient(_))
-
-  val simpleClient: IO[Client[IO]] = JdkHttpClient.simple[IO]
-
-  def server(app: Stream[IO, Unit]) =
-    BlazeServerBuilder[IO](ExecutionContext.global)
-      .withIdleTimeout(5.minutes)
-      .bindHttp(8099, "0.0.0.0")
-      .withHttpApp(
-        HttpRoutes
-          .of[IO] {
-            case POST -> Root => Ok(response)
-          }
-          .orNotFound
-      )
-      .serve
-      .concurrently(app)
-      .interruptAfter(appTime + 2.seconds)
-      .compile
-      .drain
-      .as(ExitCode.Success)
 
 }

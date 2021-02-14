@@ -1,18 +1,14 @@
-package io.bitrise.apm.symbolicator
-
 import cats.effect.{ExitCode, IO, IOApp, Resource}
 import fs2.Stream
+import helpers.requestStream
+import org.http4s._
 import org.http4s.client.Client
 import org.http4s.dsl.io._
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.implicits._
-import org.http4s.server.blaze.BlazeServerBuilder
-import org.http4s.{HttpRoutes, _}
 
-import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-object EmberClientTest extends IOApp {
 
   // Numbers below vary on different computers
   // In my case, if the request payload size is 65337 or greater
@@ -30,6 +26,7 @@ object EmberClientTest extends IOApp {
   //val appTime = 120.seconds
   //val requestPayloadSize = 65336
   //val responsePayloadSize = 200 * 1000 * 1000
+class EmberClientTest(appTime: FiniteDuration, requestPayloadSize: Int, responsePayloadSize: Int) extends IOApp {
 
   val uri = uri"http://localhost:8099"
   val body = "x" * requestPayloadSize
@@ -38,41 +35,14 @@ object EmberClientTest extends IOApp {
 
   var i = 0
   override def run(args: List[String]): IO[ExitCode] = {
-    def requestStream(client: Client[IO]): Stream[IO, Unit] =
-      Stream
-        .fixedRate(0.01.second)
-        .flatMap(_ => {
-          i = i + 1
+    def request(client: Client[IO]): Stream[IO, String] = client.stream(req).flatMap(_.bodyText)
 
-          client.stream(req).flatMap(_.bodyText)
-        })
-        .evalMap(c => IO.delay(println(s"$i ${c.size}")))
-        .interruptAfter(appTime)
+    val simpleClient: Resource[IO, Client[IO]] =
+      EmberClientBuilder.default[IO].build
 
     simpleClient.use { client =>
-      server(requestStream(client))
+      new Server(requestStream(request(client), appTime), appTime, response).run(List())
     }
   }
-
-  val simpleClient: Resource[IO, Client[IO]] =
-    EmberClientBuilder.default[IO].build
-
-  def server(app: Stream[IO, Unit]) =
-    BlazeServerBuilder[IO](ExecutionContext.global)
-      .withIdleTimeout(5.minutes)
-      .bindHttp(8099, "0.0.0.0")
-      .withHttpApp(
-        HttpRoutes
-          .of[IO] {
-            case POST -> Root => Ok(response)
-          }
-          .orNotFound
-      )
-      .serve
-      .concurrently(app)
-      .interruptAfter(appTime + 2.seconds)
-      .compile
-      .drain
-      .as(ExitCode.Success)
 
 }
