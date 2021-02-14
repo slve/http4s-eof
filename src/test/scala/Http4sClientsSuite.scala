@@ -45,6 +45,18 @@ class Http4sClientsSuite extends AnyFeatureSpec with Matchers {
     }
   }
 
+  Feature("Jetty client") {
+    Scenario("Post request small payload size") {
+      val app = new JettyClientTest(short, `1kB`, `1kB`)
+      app.run(List()).unsafeRunSync().code mustBe 0
+    }
+
+    Scenario("Post request large payload size") {
+      val app = new JettyClientTest(short, `1MB`, `1MB`)
+      app.run(List()).unsafeRunSync().code mustBe 0
+    }
+  }
+
   Feature("OkHttp client") {
     Scenario("Post request small payload size") {
       val app = new OkHttpClientTest(short, `1kB`, `1kB`)
