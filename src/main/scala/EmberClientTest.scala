@@ -16,7 +16,6 @@ class EmberClientTest(appTime: FiniteDuration, requestPayloadSize: Int, response
   val req = Request[IO](POST, uri).withEntity(body)
   val response = "x" * responsePayloadSize
 
-  var i = 0
   override def run(args: List[String]): IO[ExitCode] = {
     def request(client: Client[IO]): Stream[IO, String] = client.stream(req).flatMap(_.bodyText)
 
