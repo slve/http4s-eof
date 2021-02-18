@@ -32,7 +32,7 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
 
   override def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] = {
     import zio._
-    val interval = Duration.fromScala(1.seconds) // TODO should be 0.01.seconds!
+    val interval = Duration.fromScala(0.01.seconds)
     val timeout = Duration.fromScala(appTime)
     //val yyy: Schedule[Any, Any, duration.Duration] =
     //  (Schedule.spaced(interval) >>> Schedule.elapsed).whileOutput(_ < timeout)
@@ -50,7 +50,7 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
     //pp
 
     // SERVER OK
-    val srv = new ZioBlazeServer("x" * responsePayloadSize)
+    val srv = new ZioBlazeServer(appTime, "x" * responsePayloadSize)
     val rr: URIO[zio.ZEnv, ExitCode] = srv.run(List())
 
     // CLIENT OK

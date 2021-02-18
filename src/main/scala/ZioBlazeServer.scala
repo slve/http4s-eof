@@ -3,14 +3,15 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits._
 import org.http4s.server.blaze.BlazeServerBuilder
 import zio._
+import zio.duration.Duration
 import zio.console.putStrLn
 import zio.interop.catz._
 import zio.interop.catz.implicits._
 
 import scala.concurrent.duration._
 
-//app: Stream[IO, Unit], appTime: FiniteDuration,
-class ZioBlazeServer(response: String) extends App {
+//app: Stream[IO, Unit]
+class ZioBlazeServer(appTime: FiniteDuration, response: String) extends App {
 
   private val dsl = Http4sDsl[Task]
   import dsl._
@@ -32,6 +33,7 @@ class ZioBlazeServer(response: String) extends App {
           .resource
           .toManagedZIO
           .useForever
+          .timeout(Duration.fromScala(appTime + 2.seconds))
           //.once
           //.run
           //.exitCode

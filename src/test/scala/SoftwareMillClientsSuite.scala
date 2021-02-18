@@ -25,10 +25,17 @@ class SoftwareMillClientsSuite extends AnyFeatureSpec with Matchers {
     Scenario("Post request large payload size") {
       val app = new SttpZioClientTest(short, `1MB`, `1MB`)
       Runtime.default.unsafeRun(app.run(List())).code mustBe 0
-      println("app closed")
+    }
+
+    Scenario("Post request large payload size for an extended period") {
+      val app = new SttpZioClientTest(long, `1MB`, `1MB`)
+      Runtime.default.unsafeRun(app.run(List())).code mustBe 0
+    }
+
+    Scenario("Post request extra large payload size for an extended period") {
+      val app = new SttpZioClientTest(long, 20 * `1MB`, 20 * `1MB`)
+      Runtime.default.unsafeRun(app.run(List())).code mustBe 0
     }
   }
 
 }
-
-
