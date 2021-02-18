@@ -3,16 +3,16 @@ import sttp.client3._
 import zio.clock.Clock
 import zio.stream._
 import zio.{App, ExitCode, ZEnv, ZIO}
+import zio.duration.Duration
 
-import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.duration.{DurationDouble, FiniteDuration}
 //import scala.math.Ordered.orderingToOrdered
 
 class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, responsePayloadSize: Int) extends App {
 
   val uri = uri"http://localhost:8099"
   val body = "x" * requestPayloadSize
-  val response = "x" * responsePayloadSize
-  println(appTime)
+  //val response = "x" * responsePayloadSize
 
   //val server = new BlazeServer(
   //  fs2.Stream
@@ -23,17 +23,17 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
   //  response
   //).run(List())
 
-  val request: RequestT[Identity, Either[String, Stream[Throwable, Byte]], Any with ZioStreams] =
-    basicRequest
+  def request: RequestT[Identity, Either[String, Stream[Throwable, Byte]], Any with ZioStreams] =
+    quickRequest
       .body(body)
       .post(uri)
       .response(asStreamUnsafe(ZioStreams))
-      .readTimeout(Duration.Inf)
+      .readTimeout(2.seconds)
 
   override def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] = {
     import zio._
-    val interval = zio.duration.Duration.fromMillis(1000)
-    val timeout = zio.duration.Duration.fromMillis(5 * 1000)
+    val interval = Duration.fromScala(1.seconds) // TODO should be 0.01.seconds!
+    val timeout = Duration.fromScala(appTime)
     //val yyy: Schedule[Any, Any, duration.Duration] =
     //  (Schedule.spaced(interval) >>> Schedule.elapsed).whileOutput(_ < timeout)
 
@@ -50,13 +50,13 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
     //pp
 
     // SERVER OK
-    //val srv = new ZioBlazeServer("x" * responsePayloadSize)
-    //val rr: URIO[zio.ZEnv, ExitCode] = srv.run(List())
-    //rr
+    val srv = new ZioBlazeServer("x" * responsePayloadSize)
+    val rr: URIO[zio.ZEnv, ExitCode] = srv.run(List())
 
-    // CLIENT COMPILES DOESN'T PRINT BODY.SIZE
-    import sttp.client3.httpclient.zio.{send, HttpClientZioBackend, SttpClient}
-    import zio.console.{putStrLn, Console}
+    // CLIENT OK
+    import sttp.client3.asynchttpclient.zio.AsyncHttpClientZioBackend
+    import sttp.client3.httpclient.zio.{SttpClient, send}
+    import zio.console.{Console, putStrLn}
     var i = 0
     val s: ZIO[SttpClient with Console with Clock, Throwable, Unit] =
       Stream
@@ -64,17 +64,20 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
         .interruptAfter(timeout)
         .foreach(_ => {
           i = i + 1
-          send(request).flatMap{x =>
-            putStrLn(x.code.toString)}.flatMap(
-           _ => putStrLn(s"x ${i}")
-          )
-          //putStrLn(s"x ${i}") *>
+          putStrLn(s"Before") *>
+            send(request)
+              .flatMap { x =>
+                putStrLn(x.code.toString)
+              }
+              .flatMap(_ => putStrLn(s"x ${i}")) *>
+            putStrLn(s"After")
           //  putStrLn(request.method.toString)
           //.map(r => putStrLn(r.body.toString.size.toString))
         })
-    val sttpbe: ZLayer[Any, Throwable, SttpClient] = HttpClientZioBackend.layer()
-    val z: URIO[ZEnv, ExitCode] = s.provideLayer(sttpbe ++ Console.live ++ Clock.live).run.exitCode
-    z
+    //val sttpbe: ZLayer[Any, Throwable, SttpClient] = HttpClientZioBackend.layer()
+    val sttpbe: ZLayer[Any, Throwable, SttpClient] = AsyncHttpClientZioBackend.layer()
+    val z: URIO[ZEnv, ExitCode] = s.provideCustomLayer(sttpbe ++ Console.live ++ Clock.live).exitCode
+    rr &> z
 
     // PRINT OK
     //import zio.console.putStrLn
