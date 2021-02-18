@@ -27,7 +27,7 @@ class OkHttpClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respons
 
     simpleClient.use { client =>
       client.resource.use { c =>
-        new Server(requestStream(request(c), appTime), appTime, response).run(List())
+        new BlazeServer(requestStream(request(c), appTime), appTime, response).run(List())
       }
     }
   }

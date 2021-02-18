@@ -24,7 +24,7 @@ class JettyClientTest(appTime: FiniteDuration, requestPayloadSize: Int, response
     }
 
     simpleClient.use { client =>
-      new Server(requestStream(request(client), appTime), appTime, response).run(List())
+      new BlazeServer(requestStream(request(client), appTime), appTime, response).run(List())
     }
   }
 

@@ -26,7 +26,7 @@ class BlazeClientTest(appTime: FiniteDuration, requestPayloadSize: Int, response
         .withIdleTimeout(1.minute)
         .withResponseHeaderTimeout(44.seconds)
 
-    new Server(simpleClient.stream.flatMap(c => requestStream(request(c), appTime)), appTime, response).run(List())
+    new BlazeServer(simpleClient.stream.flatMap(c => requestStream(request(c), appTime)), appTime, response).run(List())
   }
 
 }

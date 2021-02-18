@@ -24,7 +24,7 @@ class AsyncHttpClientTest(appTime: FiniteDuration, requestPayloadSize: Int, resp
     }
 
     simpleClient.use { client =>
-      new Server(requestStream(request(client), appTime), appTime, response).run(List())
+      new BlazeServer(requestStream(request(client), appTime), appTime, response).run(List())
     }
   }
 

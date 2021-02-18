@@ -8,7 +8,7 @@ import org.http4s.server.blaze.BlazeServerBuilder
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-class Server(app: Stream[IO, Unit], appTime: FiniteDuration, response: String) extends IOApp {
+class BlazeServer(app: Stream[IO, Unit], appTime: FiniteDuration, response: String) extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] = {
     BlazeServerBuilder[IO](ExecutionContext.global)

@@ -23,7 +23,7 @@ class EmberClientTest(appTime: FiniteDuration, requestPayloadSize: Int, response
       EmberClientBuilder.default[IO].build
 
     simpleClient.use { client =>
-      new Server(requestStream(request(client), appTime), appTime, response).run(List())
+      new BlazeServer(requestStream(request(client), appTime), appTime, response).run(List())
     }
   }
 

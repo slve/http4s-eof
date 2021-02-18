@@ -22,7 +22,7 @@ class JdkHttpClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
     val simpleClient: IO[Client[IO]] = JdkHttpClient.simple[IO]
 
     simpleClient.flatMap { client =>
-      new Server(requestStream(request(client), appTime), appTime, response).run(List())
+      new BlazeServer(requestStream(request(client), appTime), appTime, response).run(List())
     }
   }
 

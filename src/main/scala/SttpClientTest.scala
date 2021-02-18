@@ -26,7 +26,7 @@ class SttpClientTest(appTime: FiniteDuration, requestPayloadSize: Int, responseP
       )
     }
 
-    new Server(requestStream(request, appTime), appTime, response).run(List())
+    new BlazeServer(requestStream(request, appTime), appTime, response).run(List())
   }
 
 }
