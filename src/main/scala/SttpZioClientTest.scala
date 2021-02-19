@@ -1,9 +1,9 @@
 import sttp.capabilities.zio.ZioStreams
 import sttp.client3._
 import zio.clock.Clock
+import zio.duration.Duration
 import zio.stream._
 import zio.{App, ExitCode, ZEnv, ZIO}
-import zio.duration.Duration
 
 import scala.concurrent.duration.{DurationDouble, FiniteDuration}
 //import scala.math.Ordered.orderingToOrdered
@@ -55,8 +55,8 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
 
     // CLIENT OK
     import sttp.client3.asynchttpclient.zio.AsyncHttpClientZioBackend
-    import sttp.client3.httpclient.zio.{SttpClient, send}
-    import zio.console.{Console, putStrLn}
+    import sttp.client3.httpclient.zio.{send, SttpClient}
+    import zio.console.{putStrLn, Console}
     var i = 0
     val s: ZIO[SttpClient with Console with Clock, Throwable, Unit] =
       Stream
@@ -64,16 +64,49 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
         .interruptAfter(timeout)
         .foreach(_ => {
           i = i + 1
-          putStrLn(s"Before") *>
-            send(request)
-              .flatMap { x =>
-                putStrLn(x.code.toString)
-              }
-              .flatMap(_ => putStrLn(s"x ${i}")) *>
-            putStrLn(s"After")
-          //  putStrLn(request.method.toString)
-          //.map(r => putStrLn(r.body.toString.size.toString))
+          val y: ZIO[Console with SttpClient, Throwable, Unit] = send(
+            basicRequest
+              .body(body)
+              .post(uri)
+              .response(asStreamAlways(ZioStreams)(_.transduce(Transducer.utf8Decode).fold("")(_ + _)))
+          ).flatMap { response =>
+            putStrLn(s"RECEIVED:\n${response.body.size}")
+          }
+
+          putStrLn(i.toString) *>
+            y
         })
+    //.map { _ =>
+    //  val xy: RIO[SttpClient, Response[Either[String, Stream[Throwable, Byte]]]] = send(request)
+    //  val z: ZIO[SttpClient, Throwable, Either[String, Stream[Throwable, Byte]]] = xy.map(_.body)
+    //  val h: ZIO[SttpClient, Any, Stream[Throwable, Byte]] = z.rightOrFail()
+    //  h
+    //}
+    //.foreach { i =>
+    //  putStrLn("y") *>
+    //    i.flatMap{
+    //      b => b.flatMap(u => u)
+    //    }
+    //}
+    //.foreach(x => {
+    //  i = i + 1
+    //  putStrLn(x) *>
+    //    putStrLn(s"Before") *>
+    //    //{
+    //    //  val xy: RIO[SttpClient, Response[Either[String, Stream[Throwable, Byte]]]] = send(request)
+    //    //  val z: ZIO[SttpClient, Throwable, Either[String, Stream[Throwable, Byte]]] = xy.map(_.body)
+    //    //    //.flatMap { x =>
+    //    //    //  x.body//.flatMap(b => b)
+    //    //    //// TODO drain body and print size
+    //    //    //  //putStrLn(x.code.toString)
+    //    //    //}
+    //    //    //.flatMap(x => putStrLn(s"x ${i}"))
+    //    //  xy
+    //    //}*>
+    //    putStrLn(s"After")
+    //  //  putStrLn(request.method.toString)
+    //  //.map(r => putStrLn(r.body.toString.size.toString))
+    //})
     //val sttpbe: ZLayer[Any, Throwable, SttpClient] = HttpClientZioBackend.layer()
     val sttpbe: ZLayer[Any, Throwable, SttpClient] = AsyncHttpClientZioBackend.layer()
     val z: URIO[ZEnv, ExitCode] = s.provideCustomLayer(sttpbe ++ Console.live ++ Clock.live).exitCode

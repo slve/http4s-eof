@@ -3,6 +3,8 @@ import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.must.Matchers
 import zio.Runtime
 
+import scala.concurrent.duration.DurationInt
+
 class SoftwareMillClientsSuite extends AnyFeatureSpec with Matchers {
   Feature("Sttp client") {
     Scenario("Post request small payload size") {
@@ -18,7 +20,7 @@ class SoftwareMillClientsSuite extends AnyFeatureSpec with Matchers {
 
   Feature("ZIO + sttp client") {
     Scenario("Post request small payload size") {
-      val app = new SttpZioClientTest(short, `1kB`, `1kB`)
+      val app = new SttpZioClientTest(5.seconds, 81 *`1kB`, 81 *`1kB`)
       Runtime.default.unsafeRun(app.run(List())).code mustBe 0
     }
 
