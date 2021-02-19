@@ -28,7 +28,9 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
       .body(body)
       .post(uri)
       .response(asStreamUnsafe(ZioStreams))
-      .readTimeout(2.seconds)
+      .readTimeout(20.seconds)
+
+  val bstream = Stream(body.getBytes.toIndexedSeq: _*)
 
   override def run(args: List[String]): ZIO[ZEnv, Nothing, ExitCode] = {
     import zio._
@@ -64,16 +66,23 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
         .interruptAfter(timeout)
         .foreach(_ => {
           i = i + 1
-          val y: ZIO[Console with SttpClient, Throwable, Unit] = send(
-            basicRequest
-              .body(body)
-              .post(uri)
-              .response(asStreamAlways(ZioStreams)(_.transduce(Transducer.utf8Decode).fold("")(_ + _)))
-          ).flatMap { response =>
-            putStrLn(s"RECEIVED:\n${response.body.size}")
-          }
+          val y: ZIO[Console with SttpClient, Throwable, Unit] =
+            send(
+              basicRequest
+                .streamBody(ZioStreams)(bstream)
+                .post(uri)
+            ).flatMap { response =>
+              putStrLn(s"$i. ${response.body.map(_.size)}")
+            }
+          //send(
+          //  basicRequest
+          //    .body(body)
+          //    .post(uri)
+          //    .response(asStreamAlways(ZioStreams)(_.transduce(Transducer.utf8Decode).fold("")(_ + _)))
+          //).flatMap { response =>
+          //  putStrLn(s"RECEIVED: ${response.body.size}")
+          //}
 
-          putStrLn(i.toString) *>
             y
         })
     //.map { _ =>
