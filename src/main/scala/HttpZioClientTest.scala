@@ -58,11 +58,11 @@ class HttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
         .interruptAfter(timeout)
         .foreach(_ => {
           i = i + 1
-          // BLAZE CLIENT STREAMED BODY - fs2 though :(
-          val vv: ZIO[Console with HClient, Serializable, Unit] = hClient.client.flatMap { c =>
+          // BLAZE CLIENT .as
+          val vv: ZIO[Console with HClient, Throwable, Unit] = hClient.client.flatMap { c =>
             c.run(req).toManagedZIO.use { res =>
             {
-              val y: ZIO[Console, Option[Throwable], Unit] = res.bodyText.compile.toList.head.flatMap { z =>
+              val y: ZIO[Console, Throwable, Unit] = res.as[String].flatMap { z =>
                 putStrLn(s"$i. ${z.size.toString}")
               }
               y

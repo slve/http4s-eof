@@ -3,6 +3,8 @@ import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.must.Matchers
 import zio.Runtime
 
+import scala.concurrent.duration.DurationInt
+
 class Http4sClientsSuite extends AnyFeatureSpec with Matchers {
 
   Feature("Async Http client") {
@@ -88,8 +90,18 @@ class Http4sClientsSuite extends AnyFeatureSpec with Matchers {
       Runtime.default.unsafeRun(app.run(List())).code mustBe 0
     }
 
-    Scenario("Post request magic payload size") {
-      val app = new HttpZioClientTest(short, 81 * `1kB`, 81 * `1kB`)
+    Scenario("Post request magic payload size 0 0") {
+      val app = new HttpZioClientTest(10.seconds, blaze.magicRequestPayloadSize, blaze.magicResponsePayloadSize)
+      Runtime.default.unsafeRun(app.run(List())).code mustBe 0
+    }
+
+    Scenario("Post request magic payload size -1 0") {
+      val app = new HttpZioClientTest(10.seconds, blaze.magicRequestPayloadSize - 1, blaze.magicResponsePayloadSize)
+      Runtime.default.unsafeRun(app.run(List())).code mustBe 0
+    }
+
+    Scenario("Post request magic payload size 0 -1") {
+      val app = new HttpZioClientTest(10.seconds, blaze.magicRequestPayloadSize, blaze.magicResponsePayloadSize - 1)
       Runtime.default.unsafeRun(app.run(List())).code mustBe 0
     }
 
