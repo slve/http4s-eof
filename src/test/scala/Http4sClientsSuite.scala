@@ -94,7 +94,7 @@ class Http4sClientsSuite extends AnyFeatureSpec with Matchers {
     }
 
     Scenario("Post request large payload size") {
-      val app = new HttpZioClientTest(short, `1MB`, `1MB`)
+      val app = new HttpZioClientTest(short, `1MB` / 10, `1MB` / 10)
       Runtime.default.unsafeRun(app.run(List())).code mustBe 0
     }
 

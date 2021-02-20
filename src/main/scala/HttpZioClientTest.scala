@@ -36,10 +36,10 @@ class HttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
         import org.http4s.client.blaze._
         catz.catsIOResourceSyntax(BlazeClientBuilder[Task](exec).resource).toManaged
 
-        //// TESTING EMBER
-        //import zio.interop.catz.implicits._
-        //import org.http4s.ember.client.EmberClientBuilder
-        //catz.catsIOResourceSyntax(EmberClientBuilder.default[Task].build).toManaged
+      //// TESTING EMBER
+      //import zio.interop.catz.implicits._
+      //import org.http4s.ember.client.EmberClientBuilder
+      //catz.catsIOResourceSyntax(EmberClientBuilder.default[Task].build).toManaged
       }
       // for our test we need a ZManaged, but right now we've got a ZIO of a ZManaged. To deal with
       // that we create a Managed of the ZIO and then flatten it
@@ -52,21 +52,47 @@ class HttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
 
     // CLIENT OK
     var i = 0
-    val s: ZIO[Console with HClient with Clock, Throwable, Unit] =
+    val s: ZIO[Console with HClient with Clock, Serializable, Unit] =
       Stream
         .tick(interval)
         .interruptAfter(timeout)
         .foreach(_ => {
           i = i + 1
-          //  // BLAZE CLIENT STATUS CODE WORKS FINE
-          val vv: ZIO[Console with HClient, Throwable, Unit] = hClient.client.flatMap { c =>
-            c.run(req).use{res => res.body.toString.size.toString}
-            val x: ZIO[Console, Throwable, Unit] =c.status(req).flatMap(x => {
-              putStrLn(s"$i. ${x.code.toString}")
-            })
-            x
+          // BLAZE CLIENT STREAMED BODY - fs2 though :(
+          val vv: ZIO[Console with HClient, Serializable, Unit] = hClient.client.flatMap { c =>
+            c.run(req).toManagedZIO.use { res =>
+            {
+              val y: ZIO[Console, Option[Throwable], Unit] = res.bodyText.compile.toList.head.flatMap { z =>
+                putStrLn(s"$i. ${z.size.toString}")
+              }
+              y
+            }
+            }
           }
           vv
+
+          // BLAZE CLIENT STREAMED BODY - fs2 though :(
+          //val vv: ZIO[Console with HClient, Serializable, Unit] = hClient.client.flatMap { c =>
+          //  c.run(req).toManagedZIO.use { res =>
+          //    {
+          //      val y: ZIO[Console, Option[Throwable], Unit] = res.bodyText.compile.toList.head.flatMap { z =>
+          //        putStrLn(s"$i. ${z.size.toString}")
+          //      }
+          //      y
+          //    }
+          //  }
+          //}
+          //vv
+
+          //  // BLAZE CLIENT STATUS CODE WORKS FINE
+          //val vv: ZIO[Console with HClient, Throwable, Unit] = hClient.client.flatMap { c =>
+          //  //c.run(req).use{res => res.body.toString.size.toString}
+          //  val x: ZIO[Console, Throwable, Unit] =c.status(req).flatMap(x => {
+          //    putStrLn(s"$i. ${x.code.toString}")
+          //  })
+          //  x
+          //}
+          //vv
 
           //// TESTING EMBER CLIENT
           //val vv: ZIO[Console with HClient, Nothing, Any] = hClient.client.flatMap { c =>
