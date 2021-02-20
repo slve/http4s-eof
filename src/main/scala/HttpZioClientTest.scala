@@ -1,6 +1,5 @@
 import org.http4s._
 import org.http4s.client.Client
-import org.http4s.client.blaze._
 import org.http4s.dsl.io._
 import org.http4s.implicits._
 import zio.clock.Clock
@@ -30,11 +29,17 @@ class HttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
 
     def clientManaged = {
       val zioManaged: ZIO[Any, Throwable, ZManaged[Any, Throwable, Client[Task]]] = ZIO.runtime[Any].map { rts =>
-        val exec = rts.platform.executor.asEC
-
         implicit def rr = rts
 
+        // BLAZE WORKS FINE
+        val exec = rts.platform.executor.asEC
+        import org.http4s.client.blaze._
         catz.catsIOResourceSyntax(BlazeClientBuilder[Task](exec).resource).toManaged
+
+        //// TESTING EMBER
+        //import zio.interop.catz.implicits._
+        //import org.http4s.ember.client.EmberClientBuilder
+        //catz.catsIOResourceSyntax(EmberClientBuilder.default[Task].build).toManaged
       }
       // for our test we need a ZManaged, but right now we've got a ZIO of a ZManaged. To deal with
       // that we create a Managed of the ZIO and then flatten it
@@ -53,13 +58,30 @@ class HttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
         .interruptAfter(timeout)
         .foreach(_ => {
           i = i + 1
+          //  // BLAZE CLIENT STATUS CODE WORKS FINE
           val vv: ZIO[Console with HClient, Throwable, Unit] = hClient.client.flatMap { c =>
-            //c.run(req).use{res => res.body.toString.size.toString}
-            c.status(req).flatMap(x => {
+            c.run(req).use{res => res.body.toString.size.toString}
+            val x: ZIO[Console, Throwable, Unit] =c.status(req).flatMap(x => {
               putStrLn(s"$i. ${x.code.toString}")
             })
+            x
           }
           vv
+
+          //// TESTING EMBER CLIENT
+          //val vv: ZIO[Console with HClient, Nothing, Any] = hClient.client.flatMap { c =>
+          //  val x: Task[String] = c.fetchAs[String](req)
+          //  x.flatMap(x => putStrLn(x)).merge
+          //}
+          //vv
+
+          // EMBER CLIENT RUNTIME ERROR: fiber failed NoSuchMethodError
+          //val vv: ZIO[Any with Console with HClient, Nothing, ExitCode] = hClient.client.flatMap { c =>
+          //  val x: Task[String] = c.fetchAs[String](req)
+          //  x.map(x => putStrLn(x)).exitCode
+          //}
+          //vv
+
           //vv.merge
           //send(
           //  basicRequest
