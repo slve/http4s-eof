@@ -12,7 +12,7 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
 
   val uri = uri"http://localhost:8099"
   val body = "x" * requestPayloadSize
-  //val response = "x" * responsePayloadSize
+  val response = "x" * responsePayloadSize
 
   //val server = new BlazeServer(
   //  fs2.Stream
@@ -52,7 +52,7 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
     //pp
 
     // SERVER OK
-    val srv = new ZioBlazeServer(appTime, "x" * responsePayloadSize)
+    val srv = new ZioBlazeServer(appTime, response)
     val rr: URIO[zio.ZEnv, ExitCode] = srv.run(List())
 
     // CLIENT OK
