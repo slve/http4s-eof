@@ -61,12 +61,12 @@ class HttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
           // BLAZE CLIENT .as
           val vv: ZIO[Console with HClient, Throwable, Unit] = hClient.client.flatMap { c =>
             c.run(req).toManagedZIO.use { res =>
-            {
               val y: ZIO[Console, Throwable, Unit] = res.as[String].flatMap { z =>
                 putStrLn(s"$i. ${z.size.toString}")
               }
+              //val y: ZIO[Console, Throwable, Unit] =
+              //  putStrLn(s"$i. ${res.status.code.toString}")
               y
-            }
             }
           }
           vv

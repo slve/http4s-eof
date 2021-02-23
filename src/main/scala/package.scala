@@ -18,8 +18,8 @@ package object helpers {
 
         request
       })
-      //.evalMap(c => IO.delay(println(s"$i ${c.size}")))
-      .evalMap(_ => IO.delay(()))
+      .evalMap(c => IO.delay(println(s"$i ${c.size}")))
+      //.evalMap(_ => IO.delay(()))
       .interruptAfter(appTime)
   }
 

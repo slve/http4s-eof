@@ -17,7 +17,8 @@ class EmberClientTest(appTime: FiniteDuration, requestPayloadSize: Int, response
   val response = "x" * responsePayloadSize
 
   override def run(args: List[String]): IO[ExitCode] = {
-    def request(client: Client[IO]): Stream[IO, String] = client.stream(req).flatMap(_.bodyText)
+    // def request(client: Client[IO]): Stream[IO, String] = client.stream(req).flatMap(_.bodyText)
+    def request(client: Client[IO]): Stream[IO, String] = client.stream(req).map(_.status.code.toString)
 
     val simpleClient: Resource[IO, Client[IO]] =
       EmberClientBuilder.default[IO].build

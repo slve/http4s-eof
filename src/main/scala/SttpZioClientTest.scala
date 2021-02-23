@@ -72,7 +72,8 @@ class SttpZioClientTest(appTime: FiniteDuration, requestPayloadSize: Int, respon
                 .streamBody(ZioStreams)(bstream)
                 .post(uri)
             ).flatMap { response =>
-              putStrLn(s"$i. ${response.body.map(_.size)}")
+              // putStrLn(s"$i. ${response.body.map(_.size)}")
+              putStrLn(s"$i. ${response.code.code.toString}")
             }
           //send(
           //  basicRequest
